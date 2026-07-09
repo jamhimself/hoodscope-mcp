@@ -35,6 +35,27 @@ export const TOOLS = [
     path: (a) => `/token/${encodeURIComponent(a.address)}`,
   },
   {
+    name: 'hoodscope_feed',
+    paid: true,
+    title: 'Live scored launch feed',
+    description:
+      'Poll the newest Robinhood Chain token launches, each auto-scored by its deployer\'s reputation (trusted / mixed / avoid / serial_spammer / new_deployer). Use min_score=70 to see ONLY launches from proven deployers (the high-signal alpha — ~1% of launches), since=<cursor from a prior call> to get only new launches, limit=N (max 100). Designed to be polled. Costs $0.01 USDC on Base.',
+    input: {
+      min_score: { type: 'string', description: 'Only return launches whose deployer scores >= this (e.g. "70" for proven deployers only). Optional.' },
+      since: { type: 'string', description: 'Cursor from a previous call (ISO timestamp) — returns only launches newer than it. Optional.' },
+      limit: { type: 'string', description: 'Max launches to return, 1-100 (default 25). Optional.' },
+    },
+    required: [],
+    path: (a) => {
+      const qs = new URLSearchParams();
+      if (a.min_score) qs.set('min_score', a.min_score);
+      if (a.since) qs.set('since', a.since);
+      if (a.limit) qs.set('limit', a.limit);
+      const s = qs.toString();
+      return '/feed/new' + (s ? `?${s}` : '');
+    },
+  },
+  {
     name: 'hoodscope_leaderboard',
     paid: true,
     title: 'Top trusted deployers',
